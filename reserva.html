@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generador PDF – Hoja de Reserva (Rent a Car)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+   :root{--azul:#0f1d3a;--dorado:#e5c437;--gris:#f4f6f8;--negro:#0a0a0a}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#fafafa;color:#111}
+.app{display:grid;grid-template-columns:460px 1fr;min-height:100vh}
+.panel{padding:28px;border-right:1px solid #e5e7eb;background:white}
+.panel h1{font-size:20px;margin:16px 0}
+.panel .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.panel label{font-size:12px;color:#374151}
+.panel input,.panel select,.panel textarea{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;background:white}
+.panel textarea{min-height:88px}
+.btn{appearance:none;border:0;border-radius:14px;padding:12px 16px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--azul);color:#fff}
+.btn.ghost{background:#fff;color:var(--azul);border:1px solid var(--azul)}
+.btnbar{display:flex;gap:10px;margin-top:14px}
+.canvas-wrap{padding:32px;overflow:auto;background:#f3f4f6}
+#pdf{width:794px;min-height:1123px;margin:auto;background:#fff;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.10)}
+    .curve-top{position:absolute;inset:0 0 auto 0;height:160px;pointer-events:none}
+    .curve-top svg{width:100%;height:100%}
+    .content{position:relative;padding:60px 56px 48px}
+    .brand-row{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{width:110px;height:64px;object-fit:contain}
+    .brand-name{font-weight:800;letter-spacing:.5px;font-size:26px}
+    .quote-badge{font-size:12px;color:#d00;font-weight:700;margin-top:4px}
+    .client{margin-top:22px}
+    .client h3{margin:0 0 6px 0;font-size:13px;letter-spacing:.2px}
+    .client-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 24px;font-size:12px}
+    .fecha{margin-top:10px;font-size:12px;font-weight:600}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;background:#f3f4f6}
+
+    table{border-collapse:collapse;width:100%}
+    .table{margin-top:14px;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+    .table thead{background:#111827;color:#fff;font-size:12px}
+    .table th,.table td{padding:10px 12px;text-align:left;border-bottom:1px solid #e5e7eb}
+    .table tbody td{font-size:13px}
+    .table tfoot td{font-weight:700}
+
+    .desc{margin:16px 0 10px;font-size:12px;padding-top:10px;border-top:2px solid #e5e7eb}
+    .pay-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+
+    .footer{margin-top:18px;font-size:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+    .qr-box{display:flex;gap:8px;align-items:center}
+    .qr-box small{display:block;color:#6b7280}
+
+    .curve-bottom{position:absolute;inset:auto 0 0 0;height:120px;pointer-events:none}
+    .muted{color:#6b7280}
+    .total{font-weight:800}
+
+    /* Responsive */
+    @media (max-width: 1000px){
+      .app{grid-template-columns:1fr}
+      .canvas-wrap{padding:16px}
+      #pdf{width:100%; min-width:auto}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <h1>Datos generales</h1>
+    <div class="row">
+      <div>
+        <label>Empresa</label>
+        <input id="empresa" value="YEAL RENT A CAR" />
+      </div>
+      <div>
+        <label>N° Cotización</label>
+        <input id="cotizacion" placeholder="auto" />
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Fecha</label>
+        <input id="fecha" type="date" />
+      </div>
+      <div>
+        <label>Forma de Pago</label>
+        <select id="pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select>
+      </div>
+    </div>
+
+    <h1>Cliente</h1>
+    <div class="row">
+      <div><label>Nombre</label><input id="nombre" placeholder="Nombre del cliente" /></div>
+      <div><label>Documento</label><input id="documento" placeholder="ID/Pasaporte" /></div>
+    </div>
+    <div class="row">
+      <div><label>Dirección</label><input id="direccion" placeholder="Ciudad, País" /></div>
+      <div><label>Teléfono</label><input id="telefono" placeholder="+503 7292 9967" /></div>
+    </div>
+
+    <h1>Vehículo</h1>
+    <div class="row">
+      <div><label>Marca/Modelo</label><input id="vehiculo" placeholder="Sedán / Corolla 2022"/></div>
+      <div><label>Placa</label><input id="placa" placeholder="P123-456"/></div>
+    </div>
+    <div class="row">
+      <div><label>Color</label><input id="color" placeholder="Blanco"/></div>
+      <div><label>Transmisión</label><select id="transm"><option>Automática</option><option>Manual</option></select></div>
+    </div>
+
+    <h1>Fechas y lugares</h1>
+    <div class="row">
+      <div><label>Entrega (fecha/hora)</label><input id="fentrega" type="datetime-local"/></div>
+      <div><label>Devolución (fecha/hora)</label><input id="fdevol" type="datetime-local"/></div>
+    </div>
+    <div class="row">
+      <div><label>Lugar de entrega</label><input id="lentrega" placeholder="Oficina / Aeropuerto"/></div>
+      <div><label>Lugar de devolución</label><input id="ldevol" placeholder="Oficina / Aeropuerto"/></div>
+    </div>
+
+    <h1>Tarifas y extras</h1>
+    <div class="row">
+      <div><label>Concepto</label><input id="concepto" value="Alquiler Sedan"/></div>
+      <div><label>Precio por día</label><input id="precio" type="number" value="30" min="0" step="0.01"/></div>
+    </div>
+    <div class="row">
+      <div><label>Descuento (USD)</label><input id="descuento" type="number" value="0" min="0" step="0.01"/></div>
+      <div><label>Depósito (garantía, USD)</label><input id="deposito" type="number" value="0" min="0" step="0.01"/></div>
+    </div>
+    <div style="margin-top:8px">
+      <label>Extras (por día, USD)</label>
+      <div class="row">
+        <div><input id="ext_gps" type="number" value="0" min="0" step="0.01"/> <small>GPS</small></div>
+        <div><input id="ext_silla" type="number" value="0" min="0" step="0.01"/> <small>Silla bebé</small></div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <div><input id="ext_cond" type="number" value="0" min="0" step="0.01"/> <small>Conductor adicional</small></div>
+        <div><input id="ext_entrega" type="number" value="0" min="0" step="0.01"/> <small>Cargo de entrega (único)</small></div>
+      </div>
+    </div>
+
+    <h1>Políticas</h1>
+    <textarea id="politicas" placeholder="• Seguro incluido sin costo adicional.&#10;• Combustible: lleno–lleno.&#10;• Kilometraje: ilimitado (salvo indicación).&#10;• Multas/peajes a cargo del cliente.&#10;• Cancelaciones: 24 h antes sin costo."></textarea>
+
+    <div class="btnbar">
+      <button class="btn primary" id="generar" type="button" aria-label="Generar PDF">Generar PDF</button>
+      <button class="btn ghost" id="rellenar" type="button" aria-label="Rellenar con datos de ejemplo">Relleno de ejemplo</button>
+    </div>
+    <p class="muted" style="margin-top:8px">El PDF se descarga automáticamente. IVA: <strong>no aplicado</strong>. Seguro: <strong>incluido</strong>.</p>
+  </aside>
+
+  <main class="canvas-wrap">
+    <section id="pdf" aria-label="Vista previa PDF">
+      <div class="curve-top">
+        <svg viewBox="0 0 1000 200" preserveAspectRatio="none"><path d="M0,80 C200,0 600,0 1000,80 L1000,0 L0,0 Z" fill="var(--azul)"/><path d="M1000,180 C700,100 300,100 0,180 L0,200 L1000,200 Z" fill="var(--dorado)"/></svg>
+      </div>
+
+      <div class="content">
+        <div class="brand-row">
+          <div class="brand">
+            <img id="logo" class="brand-logo" src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/car.svg" alt="logo"/>
+            <div>
+              <div class="brand-name" id="empresaTxt">YEAL RENT A CAR</div>
+              <div class="quote-badge">COTIZACIÓN N°<span id="cotizacionTxt">000001</span></div>
+            </div>
+          </div>
+          <div class="qr-box">
+            <img id="qrwa" alt="WhatsApp" width="90" height="90"/>
+            <div>
+              <strong>WhatsApp soporte</strong>
+              <small>Escanea el QR o escribe al +503 7292‑9967</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="client">
+          <h3>DATOS DEL CLIENTE</h3>
+          <div class="client-grid">
+            <div><strong>Nombre:</strong> <span id="nombreTxt">—</span></div>
+            <div><strong>Dirección:</strong> <span id="direccionTxt">—</span></div>
+            <div><strong>Documento:</strong> <span id="documentoTxt">—</span></div>
+            <div><strong>Teléfono:</strong> <span id="telefonoTxt">—</span></div>
+          </div>
+        </div>
+
+        <div class="fecha">Fecha: <span id="fechaTxt">—</span>
+          <span class="tag" style="margin-left:10px">Entrega: <span id="entregaTxt">—</span></span>
+          <span class="tag" style="margin-left:6px">Devolución: <span id="devolTxt">—</span></span>
+          <span class="tag" style="margin-left:6px">Pago: <span id="pagoTxt">—</span></span>
+          <div class="muted" style="margin-top:10px">Lugar entrega: <span id="lentregaTxt">—</span> · Lugar devolución: <span id="ldevolTxt">—</span></div>
+        </div>
+
+        <div class="grid2" style="margin-top:14px">
+          <div>
+            <h3 style="margin:0 0 6px 0;font-size:13px">VEHÍCULO</h3>
+            <div class="muted">Modelo: <span id="vehiculoTxt">—</span> · Placa: <span id="placaTxt">—</span> · Color: <span id="colorTxt">—</span> · <span id="transmTxt">—</span></div>
+          </div>
+          <div style="text-align:right"><span class="muted">Días cobrados:</span> <strong id="diasTxt">0</strong></div>
+        </div>
+
+        <table class="table" cellspacing="0" style="margin-top:10px">
+          <thead>
+            <tr><th style="width:42%">Concepto</th><th style="width:14%">Días</th><th style="width:16%">Precio/Día</th><th style="width:14%">Extras</th><th style="width:14%">Total</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="conceptoTxt">—</td>
+              <td id="cantidadTxt">—</td>
+              <td id="precioTxt">—</td>
+              <td id="extrasTxt">—</td>
+              <td id="totalTxt">—</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="4" style="text-align:right">Subtotal</td><td id="subtotalTxt" class="total">—</td></tr>
+            <tr><td colspan="4" style="text-align:right">Descuento</td><td id="descTxt">—</td></tr>
+            <tr><td colspan="4" style="text-align:right">Depósito (garantía)</td><td id="depTxt">—</td></tr>
+            <tr><td colspan="4" style="text-align:right">TOTAL A PAGAR</td><td id="granTotalTxt" class="total">—</td></tr>
+          </tfoot>
+        </table>
+
+        <div class="desc"><strong>Políticas:</strong>
+          <div id="politicasTxt" class="muted">—</div>
+        </div>
+
+        <div class="footer">
+          <div>
+            <div><strong>Luis Alejandro Coto Jovel</strong></div>
+            <div>Dirección: Zacatecoluca, La Paz</div>
+            <div>E‑Mail: <span class="muted">yealrentacar@gmail.com</span></div>
+            <div>Teléfono: +503 7292‑9967</div>
+          </div>
+          <div class="muted">Gracias por preferirnos</div>
+        </div>
+      </div>
+
+      <div class="curve-bottom">
+        <svg viewBox="0 0 1000 200" preserveAspectRatio="none"><path d="M0,0 C300,120 700,120 1000,0 L1000,200 L0,200 Z" fill="var(--dorado)"/><path d="M0,40 C300,160 700,160 1000,40 L1000,200 L0,200 Z" fill="var(--azul)"/></svg>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+  const $ = (id)=>document.getElementById(id);
+  const fmt = (n)=> new Intl.NumberFormat('es-SV',{style:'currency',currency:'USD',minimumFractionDigits:2}).format(Number(n||0));
+  const asDate = (v)=> v? new Date(v) : null;
+
+  function diasEntre(a,b){
+    if(!a||!b) return 0;
+    const diffMs = b - a;
+    if(diffMs<=0) return 0;
+    const d = diffMs / (1000*60*60*24);
+    return Math.ceil(d); // redondeo al alza
+  }
+
+  function autonum(){
+    if(!$('cotizacion').value){
+      const d = new Date();
+      const y = String(d.getFullYear()).slice(-2);
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const n = Math.floor(Math.random()*900+100);
+      $('cotizacion').value = `${y}${m}-${n}`;
+    }
+  }
+
+  function setQR(){
+    const phone = ($('telefono').value || '+503 72929967').replace(/[^0-9]/g,'');
+    const wa = `https://wa.me/${phone}`;
+    $('qrwa').src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(wa)}`;
+  }
+
+  function sync(){
+    autonum();
+    const empresa = $('empresa').value || '—';
+    const cot = $('cotizacion').value || '';
+    const fecha = $('fecha').value ? new Date($('fecha').value) : new Date();
+
+    $('empresaTxt').textContent = empresa;
+    $('cotizacionTxt').textContent = cot.toString();
+    $('fechaTxt').textContent = fecha.toLocaleDateString('es-SV');
+
+    // Cliente
+    ['nombre','direccion','documento','telefono'].forEach(k=>$(k+'Txt').textContent = $(k).value || '—');
+
+    // Vehículo
+    ['vehiculo','placa','color'].forEach(k=>$(k+'Txt').textContent = $(k).value || '—');
+    $('transmTxt').textContent = $('transm').value || '—';
+
+    // Fechas y lugares
+    const fe = asDate($('fentrega').value); const fd = asDate($('fdevol').value);
+    $('entregaTxt').textContent = fe? fe.toLocaleString('es-SV') : '—';
+    $('devolTxt').textContent = fd? fd.toLocaleString('es-SV') : '—';
+    $('lentregaTxt').textContent = $('lentrega').value || '—';
+    $('ldevolTxt').textContent = $('ldevol').value || '—';
+
+    const dias = diasEntre(fe,fd);
+    $('diasTxt').textContent = dias;
+
+    // Tarifas
+    const precio = Number($('precio').value||0);
+    const extrasDia = Number($('ext_gps').value||0) + Number($('ext_silla').value||0) + Number($('ext_cond').value||0);
+    const cargoEntrega = Number($('ext_entrega').value||0);
+    const descuento = Number($('descuento').value||0);
+    const subtotal = (precio + extrasDia) * dias + cargoEntrega;
+    const iva = 0; // no aplica
+    const deposito = Number($('deposito').value||0);
+    const total = Math.max(subtotal - descuento + iva,0);
+
+    $('conceptoTxt').textContent = $('concepto').value || 'Alquiler';
+    $('cantidadTxt').textContent = dias;
+    $('precioTxt').textContent = fmt(precio);
+    $('extrasTxt').textContent = dias>0? fmt(extrasDia*dias + cargoEntrega): fmt(0);
+    $('totalTxt').textContent = fmt(total);
+
+    $('subtotalTxt').textContent = fmt(subtotal);
+    $('descTxt').textContent = `- ${fmt(descuento)}`;
+
+    $('depTxt').textContent = fmt(deposito);
+    $('granTotalTxt').textContent = fmt(total);
+
+    // Políticas: escapar + saltos de línea visibles
+    const rawPol = $('politicas').value || '—';
+    const esc = rawPol
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
+    $('politicasTxt').innerHTML = esc.replace(/\n/g,'<br>');
+
+    // Pago visible
+    $('pagoTxt').textContent = $('pago').value || '—';
+
+    setQR();
+  }
+
+  async function generarPDF(){
+    await sync();
+
+    // Asegurar QR cargado antes de capturar
+    await new Promise((resolve)=>{
+      const img = $('qrwa');
+      if (!img) return resolve();
+      if (img.complete && img.naturalWidth) return resolve();
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
+
+    const el = document.querySelector('#pdf');
+    const scale = Math.max(2, window.devicePixelRatio || 2);
+    const canvas = await html2canvas(el,{scale});
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({orientation:'p', unit:'pt', format:'a4'});
+
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgW0 = canvas.width;
+    const imgH0 = canvas.height;
+
+    // Encaje contain (sin recortes)
+    const scaleToFit = Math.min(pageW / imgW0, pageH / imgH0);
+    const drawW = imgW0 * scaleToFit;
+    const drawH = imgH0 * scaleToFit;
+    const x = (pageW - drawW) / 2;
+    const y = (pageH - drawH) / 2;
+
+    pdf.addImage(imgData, 'PNG', x, y, drawW, drawH, undefined, 'FAST');
+    const nombreArchivo = `Cotizacion_${$('cotizacion').value || '000000'}.pdf`;
+    pdf.save(nombreArchivo);
+  }
+
+  // Debounce para inputs
+  const debounce=(fn,ms=120)=>{let t; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms)}}
+  const syncDeb = debounce(sync, 120);
+
+  $('generar').addEventListener('click', generarPDF);
+  ['empresa','cotizacion','fecha','pago','nombre','documento','direccion','telefono','vehiculo','placa','color','transm','fentrega','fdevol','lentrega','ldevol','concepto','precio','descuento','deposito','ext_gps','ext_silla','ext_cond','ext_entrega','politicas'].forEach(id=>{
+    $(id).addEventListener('input', syncDeb);
+  });
+
+  $('rellenar').addEventListener('click', ()=>{
+    $('empresa').value = 'YEAL RENT A CAR';
+    $('cotizacion').value = '';
+    $('fecha').value = new Date().toISOString().slice(0,10);
+    $('pago').value = 'Efectivo';
+
+    $('nombre').value = 'Carlos Marcelo Valle Ulloa';
+    $('documento').value = 'EAB812500';
+    $('direccion').value = 'Ecuador';
+    $('telefono').value = '+503 7292 9967';
+
+    $('vehiculo').value = 'Sedán / Corolla 2022';
+    $('placa').value = 'P123-456';
+    $('color').value = 'Blanco';
+    $('transm').value = 'Automática';
+
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0, 0);
+    const end = new Date(start.getTime() + 4*24*60*60*1000);
+    $('fentrega').value = new Date(start.getTime()-start.getTimezoneOffset()*60000).toISOString().slice(0,16);
+    $('fdevol').value = new Date(end.getTime()-end.getTimezoneOffset()*60000).toISOString().slice(0,16);
+    $('lentrega').value = 'Aeropuerto';
+    $('ldevol').value = 'Oficina Centro';
+
+    $('concepto').value = 'Alquiler Sedan';
+    $('precio').value = 30;
+    $('ext_gps').value = 5;
+    $('ext_silla').value = 0;
+    $('ext_cond').value = 0;
+    $('ext_entrega').value = 0;
+    $('descuento').value = 0;
+    $('deposito').value = 150;
+
+    $('politicas').value = '• Seguro incluido sin costo adicional.\n• Combustible: lleno–lleno.\n• Kilometraje: ilimitado.\n• Multas/peajes a cargo del cliente.\n• Cancelación sin costo hasta 24h antes.';
+
+    sync();
+  });
+
+  // Primera sincronización
+  document.addEventListener('DOMContentLoaded', sync);
+</script>
+</body>
+</html>
+
+
+
