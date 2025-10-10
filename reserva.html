@@ -9,58 +9,90 @@
    :root{--azul:#0f1d3a;--dorado:#e5c437;--gris:#f4f6f8;--negro:#0a0a0a}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#fafafa;color:#111}
-.app{display:grid;grid-template-columns:460px 1fr;min-height:100vh}
-.panel{padding:28px;border-right:1px solid #e5e7eb;background:white}
-.panel h1{font-size:20px;margin:16px 0}
-.panel .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* DEFAULT: Mobile-first approach (single column) */
+.app{display:block;min-height:100vh} 
+.panel{padding:16px;border-bottom:1px solid #e5e7eb;background:white;width:100%}
+.panel h1{font-size:18px;margin:12px 0}
+.panel .row{display:grid;grid-template-columns:1fr;gap:8px} /* Stack in mobile */
 .panel label{font-size:12px;color:#374151}
-.panel input,.panel select,.panel textarea{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;background:white}
+.panel input,.panel select,.panel textarea{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;background:white}
 .panel textarea{min-height:88px}
-.btn{appearance:none;border:0;border-radius:14px;padding:12px 16px;font-weight:600;cursor:pointer}
+.btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;font-size:14px}
 .btn.primary{background:var(--azul);color:#fff}
 .btn.ghost{background:#fff;color:var(--azul);border:1px solid var(--azul)}
-.btnbar{display:flex;gap:10px;margin-top:14px}
-.canvas-wrap{padding:32px;overflow:auto;background:#f3f4f6}
-#pdf{width:794px;min-height:1123px;margin:auto;background:#fff;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.10)}
-    .curve-top{position:absolute;inset:0 0 auto 0;height:160px;pointer-events:none}
-    .curve-top svg{width:100%;height:100%}
-    .content{position:relative;padding:60px 56px 48px}
-    .brand-row{display:flex;align-items:center;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand-logo{width:110px;height:64px;object-fit:contain}
-    .brand-name{font-weight:800;letter-spacing:.5px;font-size:26px}
-    .quote-badge{font-size:12px;color:#d00;font-weight:700;margin-top:4px}
-    .client{margin-top:22px}
-    .client h3{margin:0 0 6px 0;font-size:13px;letter-spacing:.2px}
-    .client-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 24px;font-size:12px}
-    .fecha{margin-top:10px;font-size:12px;font-weight:600}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;background:#f3f4f6}
+.btnbar{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.canvas-wrap{padding:16px 8px;overflow:auto;background:#f3f4f6}
+#pdf{width:100%;min-width:auto;margin:auto;background:#fff;position:relative;box-shadow:0 5px 15px rgba(0,0,0,.10)}
 
-    table{border-collapse:collapse;width:100%}
-    .table{margin-top:14px;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
-    .table thead{background:#111827;color:#fff;font-size:12px}
-    .table th,.table td{padding:10px 12px;text-align:left;border-bottom:1px solid #e5e7eb}
-    .table tbody td{font-size:13px}
-    .table tfoot td{font-weight:700}
+/* PDF Styles (mostly fixed width for print simulation) */
+.curve-top{position:absolute;inset:0 0 auto 0;height:120px;pointer-events:none}
+.curve-top svg{width:100%;height:100%}
+.content{position:relative;padding:30px 20px 24px}
+.brand-row{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:8px}
+.brand-logo{width:80px;height:48px;object-fit:contain}
+.brand-name{font-weight:800;letter-spacing:.5px;font-size:20px}
+.quote-badge{font-size:10px;color:#d00;font-weight:700;margin-top:2px}
+.client{margin-top:18px}
+.client h3{margin:0 0 6px 0;font-size:12px;letter-spacing:.2px}
+.client-grid{display:grid;grid-template-columns:1fr;gap:4px;font-size:12px} /* Stack in PDF view for mobile */
+.fecha{margin-top:8px;font-size:11px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr;gap:8px} /* Stack in PDF view for mobile */
+.tag{display:block;padding:2px 8px;border-radius:999px;font-size:10px;background:#f3f4f6;margin-top:4px}
+.tag:first-of-type{margin-left:0}
 
-    .desc{margin:16px 0 10px;font-size:12px;padding-top:10px;border-top:2px solid #e5e7eb}
-    .pay-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.table-wrap{overflow-x:auto;margin-top:14px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
+table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wide enough for print/desktop */
+.table thead{background:#111827;color:#fff;font-size:11px}
+.table th,.table td{padding:8px 10px;text-align:left;border-bottom:1px solid #e5e7eb}
+.table tbody td{font-size:12px}
+.table tfoot td{font-weight:700;font-size:12px}
 
-    .footer{margin-top:18px;font-size:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
-    .qr-box{display:flex;gap:8px;align-items:center}
-    .qr-box small{display:block;color:#6b7280}
+.desc{margin:14px 0 8px;font-size:11px;padding-top:8px;border-top:1px solid #e5e7eb}
+.pay-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
 
-    .curve-bottom{position:absolute;inset:auto 0 0 0;height:120px;pointer-events:none}
-    .muted{color:#6b7280}
-    .total{font-weight:800}
+.footer{margin-top:16px;font-size:11px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px}
+.qr-box{display:flex;gap:8px;align-items:center}
+.qr-box small{display:block;color:#6b7280;font-size:10px}
+.qr-box strong{font-size:12px}
 
-    /* Responsive */
-    @media (max-width: 1000px){
-      .app{grid-template-columns:1fr}
-      .canvas-wrap{padding:16px}
-      #pdf{width:100%; min-width:auto}
-    }
+.curve-bottom{position:absolute;inset:auto 0 0 0;height:80px;pointer-events:none}
+.muted{color:#6b7280}
+.total{font-weight:800}
+.text-right-mobile{text-align:left!important;margin-top:4px} /* Adjusting text alignment for stacked elements */
+
+
+/* Tablet and Desktop Styles */
+@media (min-width: 600px){
+    .panel .row{grid-template-columns:1fr 1fr;gap:10px}
+    .client-grid{grid-template-columns:repeat(2,1fr);gap:8px 24px}
+    .grid2{grid-template-columns:1fr 1fr;gap:10px}
+    .tag{display:inline-block;margin-left:6px;margin-top:0}
+    .tag:first-of-type{margin-left:10px}
+    .brand-row{flex-direction:row;align-items:center}
+    .footer{flex-direction:row;align-items:flex-end}
+    .text-right-mobile{text-align:right!important;margin-top:0}
+    .curve-top{height:160px;}
+    .curve-bottom{height:120px;}
+    .content{padding:60px 56px 48px}
+    .brand-logo{width:110px;height:64px}
+    .brand-name{font-size:26px}
+    .quote-badge{font-size:12px}
+    .client h3{font-size:13px}
+    .fecha{font-size:12px}
+    .desc{font-size:12px}
+    .footer{font-size:12px}
+    .qr-box small{font-size:inherit}
+    .qr-box strong{font-size:inherit}
+}
+
+@media (min-width: 1000px){
+  .app{display:grid;grid-template-columns:460px 1fr}
+  .panel{border-right:1px solid #e5e7eb;border-bottom:none;padding:28px;}
+  .canvas-wrap{padding:32px;background:#f3f4f6}
+  #pdf{width:794px; min-height:1123px;}
+}
   </style>
 </head>
 <body>
@@ -158,7 +190,7 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
       <div class="content">
         <div class="brand-row">
           <div class="brand">
-            <img id="logo" class="brand-logo" src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/car.svg" alt="logo"/>
+            <img id="logo" class="brand-logo" src="https://raw.githubusercontent.com/1DavidGarcia/images/main/yeal.jpeg" alt="logo"/>
             <div>
               <div class="brand-name" id="empresaTxt">YEAL RENT A CAR</div>
               <div class="quote-badge">COTIZACIÓN N°<span id="cotizacionTxt">000001</span></div>
@@ -177,16 +209,16 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
           <h3>DATOS DEL CLIENTE</h3>
           <div class="client-grid">
             <div><strong>Nombre:</strong> <span id="nombreTxt">—</span></div>
-            <div><strong>Dirección:</strong> <span id="direccionTxt">—</span></div>
             <div><strong>Documento:</strong> <span id="documentoTxt">—</span></div>
+            <div><strong>Dirección:</strong> <span id="direccionTxt">—</span></div>
             <div><strong>Teléfono:</strong> <span id="telefonoTxt">—</span></div>
           </div>
         </div>
 
         <div class="fecha">Fecha: <span id="fechaTxt">—</span>
-          <span class="tag" style="margin-left:10px">Entrega: <span id="entregaTxt">—</span></span>
-          <span class="tag" style="margin-left:6px">Devolución: <span id="devolTxt">—</span></span>
-          <span class="tag" style="margin-left:6px">Pago: <span id="pagoTxt">—</span></span>
+          <span class="tag">Entrega: <span id="entregaTxt">—</span></span>
+          <span class="tag">Devolución: <span id="devolTxt">—</span></span>
+          <span class="tag">Pago: <span id="pagoTxt">—</span></span>
           <div class="muted" style="margin-top:10px">Lugar entrega: <span id="lentregaTxt">—</span> · Lugar devolución: <span id="ldevolTxt">—</span></div>
         </div>
 
@@ -195,29 +227,31 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
             <h3 style="margin:0 0 6px 0;font-size:13px">VEHÍCULO</h3>
             <div class="muted">Modelo: <span id="vehiculoTxt">—</span> · Placa: <span id="placaTxt">—</span> · Color: <span id="colorTxt">—</span> · <span id="transmTxt">—</span></div>
           </div>
-          <div style="text-align:right"><span class="muted">Días cobrados:</span> <strong id="diasTxt">0</strong></div>
+          <div class="text-right-mobile"><span class="muted">Días cobrados:</span> <strong id="diasTxt">0</strong></div>
         </div>
 
-        <table class="table" cellspacing="0" style="margin-top:10px">
-          <thead>
-            <tr><th style="width:42%">Concepto</th><th style="width:14%">Días</th><th style="width:16%">Precio/Día</th><th style="width:14%">Extras</th><th style="width:14%">Total</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td id="conceptoTxt">—</td>
-              <td id="cantidadTxt">—</td>
-              <td id="precioTxt">—</td>
-              <td id="extrasTxt">—</td>
-              <td id="totalTxt">—</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr><td colspan="4" style="text-align:right">Subtotal</td><td id="subtotalTxt" class="total">—</td></tr>
-            <tr><td colspan="4" style="text-align:right">Descuento</td><td id="descTxt">—</td></tr>
-            <tr><td colspan="4" style="text-align:right">Depósito (garantía)</td><td id="depTxt">—</td></tr>
-            <tr><td colspan="4" style="text-align:right">TOTAL A PAGAR</td><td id="granTotalTxt" class="total">—</td></tr>
-          </tfoot>
-        </table>
+        <div class="table-wrap">
+          <table class="table" cellspacing="0">
+            <thead>
+              <tr><th style="width:42%">Concepto</th><th style="width:14%">Días</th><th style="width:16%">Precio/Día</th><th style="width:14%">Extras</th><th style="width:14%">Total</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="conceptoTxt">—</td>
+                <td id="cantidadTxt">—</td>
+                <td id="precioTxt">—</td>
+                <td id="extrasTxt">—</td>
+                <td id="totalTxt">—</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr><td colspan="4" style="text-align:right">Subtotal</td><td id="subtotalTxt" class="total">—</td></tr>
+              <tr><td colspan="4" style="text-align:right">Descuento</td><td id="descTxt">—</td></tr>
+              <tr><td colspan="4" style="text-align:right">Depósito (garantía)</td><td id="depTxt">—</td></tr>
+              <tr><td colspan="4" style="text-align:right">TOTAL A PAGAR</td><td id="granTotalTxt" class="total">—</td></tr>
+            </tfoot>
+          </table>
+        </div>
 
         <div class="desc"><strong>Políticas:</strong>
           <div id="politicasTxt" class="muted">—</div>
@@ -425,6 +459,3 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
 </script>
 </body>
 </html>
-
-
-
