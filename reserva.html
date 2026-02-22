@@ -179,11 +179,53 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     <h1>Políticas</h1>
     <textarea id="politicas" placeholder="• Seguro incluido sin costo adicional.&#10;• Combustible: lleno–lleno.&#10;• Kilometraje: ilimitado (salvo indicación).&#10;• Multas/peajes a cargo del cliente.&#10;• Cancelaciones: 24 h antes sin costo."></textarea>
 
-    <div class="btnbar">
-      <button class="btn nav" onclick="window.location.href='app.html'" type="button">Ir a app</button>
-      <button class="btn primary" id="generar" type="button" aria-label="Generar PDF">Generar PDF</button>
-      <button class="btn ghost" id="rellenar" type="button" aria-label="Rellenar con datos de ejemplo">Relleno de ejemplo</button>
-    </div>
+    <style>
+  /* Diseño mejorado para la barra de botones */
+  .btnbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas en móvil */
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  /* El botón de "Ir a app" con un color que resalte */
+  .btn.nav-app {
+    background-color: #4f46e5; /* Índigo */
+    color: white;
+    border: none;
+  }
+
+  /* Botón de actualización/verificación */
+  .btn.refresh {
+    background-color: #10b981; /* Esmeralda */
+    color: white;
+    border: none;
+  }
+
+  @media (min-width: 600px) {
+    .btnbar {
+      grid-template-columns: repeat(4, 1fr); /* Cuatro columnas en desktop */
+    }
+  }
+</style>
+
+<div class="btnbar">
+  <button class="btn nav-app" onclick="window.location.href='app.html'" type="button">
+    Ir a app
+  </button>
+  
+  <button class="btn primary" id="generar" type="button" aria-label="Generar PDF">
+    Generar PDF
+  </button>
+  
+  <button class="btn ghost" id="rellenar" type="button" aria-label="Rellenar con datos de ejemplo">
+    Relleno ejemplo
+  </button>
+
+  <button class="btn refresh" onclick="location.reload(true)" type="button">
+    Ver Cambios
+  </button>
+</div>
     <p class="muted" style="margin-top:8px">El PDF se descarga automáticamente. IVA: <strong>no aplicado</strong>. Seguro: <strong>incluido</strong>.</p>
   </aside>
 
