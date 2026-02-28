@@ -7,97 +7,468 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     .btn.nav {
-    background: #e5c437; /* El dorado de tu diseño */
-    color: #0f1d3a;
-    border: none;
+      background: #e5c437;
+      color: #0f1d3a;
+      border: none;
     }
-   :root{--azul:#0f1d3a;--dorado:#e5c437;--gris:#f4f6f8;--negro:#0a0a0a}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#fafafa;color:#111}
+    
+    :root {
+      --azul: #0f1d3a;
+      --dorado: #e5c437;
+      --gris: #f4f6f8;
+      --negro: #0a0a0a;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: #fafafa;
+      color: #111;
+    }
 
-/* DEFAULT: Mobile-first approach (single column) */
-.app{display:block;min-height:100vh} 
-.panel{padding:16px;border-bottom:1px solid #e5e7eb;background:white;width:100%}
-.panel h1{font-size:18px;margin:12px 0}
-.panel .row{display:grid;grid-template-columns:1fr;gap:8px} /* Stack in mobile */
-.panel label{font-size:12px;color:#374151}
-.panel input,.panel select,.panel textarea{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;background:white}
-.panel textarea{min-height:88px}
-.btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;font-size:14px}
-.btn.primary{background:var(--azul);color:#fff}
-.btn.ghost{background:#fff;color:var(--azul);border:1px solid var(--azul)}
-.btnbar{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-.canvas-wrap{padding:16px 8px;overflow:auto;background:#f3f4f6}
-#pdf{width:100%;min-width:auto;margin:auto;background:#fff;position:relative;box-shadow:0 5px 15px rgba(0,0,0,.10)}
+    /* Panel lateral */
+    .app {
+      display: block;
+      min-height: 100vh;
+    }
+    
+    .panel {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      background: white;
+      width: 100%;
+    }
+    
+    .panel h1 {
+      font-size: 18px;
+      margin: 12px 0;
+    }
+    
+    .panel .row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    
+    .panel label {
+      font-size: 12px;
+      color: #374151;
+    }
+    
+    .panel input, .panel select, .panel textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+    
+    .panel textarea {
+      min-height: 88px;
+    }
+    
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .btn.primary {
+      background: var(--azul);
+      color: #fff;
+    }
+    
+    .btn.ghost {
+      background: #fff;
+      color: var(--azul);
+      border: 1px solid var(--azul);
+    }
+    
+    .btnbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    
+    .btn.nav-app {
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+    }
+    
+    .btn.refresh {
+      background-color: #10b981;
+      color: white;
+      border: none;
+    }
+    
+    .canvas-wrap {
+      padding: 16px 8px;
+      overflow: auto;
+      background: #f3f4f6;
+    }
+    
+    #pdf {
+      width: 100%;
+      max-width: 794px;
+      min-height: 1123px;
+      margin: auto;
+      background: #fff;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0,0,0,.10);
+    }
 
-/* PDF Styles (mostly fixed width for print simulation) */
-.curve-top{position:absolute;inset:0 0 auto 0;height:120px;pointer-events:none}
-.curve-top svg{width:100%;height:100%}
-.content{position:relative;padding:30px 20px 24px}
-.brand-row{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:8px}
-.brand-logo{width:80px;height:48px;object-fit:contain}
-.brand-name{font-weight:800;letter-spacing:.5px;font-size:20px}
-.quote-badge{font-size:10px;color:#d00;font-weight:700;margin-top:2px}
-.client{margin-top:18px}
-.client h3{margin:0 0 6px 0;font-size:12px;letter-spacing:.2px}
-.client-grid{display:grid;grid-template-columns:1fr;gap:4px;font-size:12px} /* Stack in PDF view for mobile */
-.fecha{margin-top:8px;font-size:11px;font-weight:600}
-.grid2{display:grid;grid-template-columns:1fr;gap:8px} /* Stack in PDF view for mobile */
-.tag{display:block;padding:2px 8px;border-radius:999px;font-size:10px;background:#f3f4f6;margin-top:4px}
-.tag:first-of-type{margin-left:0}
+    /* Estilos del PDF */
+    .curve-top {
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 120px;
+      pointer-events: none;
+    }
+    
+    .curve-top svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .content {
+      position: relative;
+      padding: 30px 20px 24px;
+    }
+    
+    .brand-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .brand-logo {
+      width: 80px;
+      height: 48px;
+      object-fit: contain;
+    }
+    
+    .brand-name {
+      font-weight: 800;
+      letter-spacing: .5px;
+      font-size: 18px;
+    }
+    
+    .quote-badge {
+      font-size: 10px;
+      color: #d00;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    
+    .client {
+      margin-top: 18px;
+    }
+    
+    .client h3 {
+      margin: 0 0 6px 0;
+      font-size: 11px;
+      letter-spacing: .2px;
+    }
+    
+    .client-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      font-size: 11px;
+    }
+    
+    .fecha {
+      margin-top: 8px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    
+    .grid2 h3 {
+      margin: 0 0 6px 0;
+      font-size: 11px;
+    }
+    
+    .tag {
+      display: block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 9px;
+      background: #f3f4f6;
+      margin-top: 4px;
+    }
 
-.table-wrap{overflow-x:auto;margin-top:14px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
-table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wide enough for print/desktop */
-.table thead{background:#111827;color:#fff;font-size:11px}
-.table th,.table td{padding:8px 10px;text-align:left;border-bottom:1px solid #e5e7eb}
-.table tbody td{font-size:12px}
-.table tfoot td{font-weight:700;font-size:12px}
+    /* Tabla mejorada */
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 100%;
+    }
+    
+    .table thead {
+      background: #111827;
+      color: #fff;
+      font-size: 10px;
+    }
+    
+    .table th, .table td {
+      padding: 8px 6px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .table th {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    
+    .table tbody td {
+      font-size: 11px;
+    }
+    
+    .table tfoot td {
+      font-weight: 700;
+      font-size: 11px;
+      padding: 6px;
+    }
+    
+    /* Alineación de precios */
+    .table td:nth-child(2),
+    .table td:nth-child(3),
+    .table td:nth-child(4),
+    .table td:nth-child(5),
+    .table th:nth-child(2),
+    .table th:nth-child(3),
+    .table th:nth-child(4),
+    .table th:nth-child(5) {
+      text-align: right;
+    }
+    
+    .table td:nth-child(1),
+    .table th:nth-child(1) {
+      text-align: left;
+    }
+    
+    .desc {
+      margin: 14px 0 8px;
+      font-size: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .footer {
+      margin-top: 16px;
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    
+    .qr-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .qr-box small {
+      display: block;
+      color: #6b7280;
+      font-size: 9px;
+    }
+    
+    .qr-box strong {
+      font-size: 10px;
+    }
+    
+    .curve-bottom {
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 80px;
+      pointer-events: none;
+    }
+    
+    .muted {
+      color: #6b7280;
+    }
+    
+    .total {
+      font-weight: 800;
+    }
 
-.desc{margin:14px 0 8px;font-size:11px;padding-top:8px;border-top:1px solid #e5e7eb}
-.pay-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+    /* Tablet */
+    @media (min-width: 600px) {
+      .panel .row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      
+      .btnbar {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .client-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px 16px;
+      }
+      
+      .grid2 {
+        grid-template-columns: 1fr auto;
+        align-items: end;
+      }
+      
+      .tag {
+        display: inline-block;
+        margin-left: 6px;
+        margin-top: 0;
+      }
+      
+      .tag:first-of-type {
+        margin-left: 10px;
+      }
+      
+      .brand-row {
+        flex-direction: row;
+        align-items: center;
+      }
+      
+      .footer {
+        flex-direction: row;
+        align-items: flex-end;
+      }
+      
+      .curve-top {
+        height: 140px;
+      }
+      
+      .curve-bottom {
+        height: 100px;
+      }
+      
+      .content {
+        padding: 50px 40px 40px;
+      }
+      
+      .brand-logo {
+        width: 100px;
+        height: 60px;
+      }
+      
+      .brand-name {
+        font-size: 22px;
+      }
+      
+      .quote-badge {
+        font-size: 11px;
+      }
+      
+      .client h3, .grid2 h3 {
+        font-size: 12px;
+      }
+      
+      .client-grid {
+        font-size: 12px;
+      }
+      
+      .fecha {
+        font-size: 11px;
+      }
+      
+      .tag {
+        font-size: 10px;
+      }
+      
+      .desc {
+        font-size: 11px;
+      }
+      
+      .footer {
+        font-size: 11px;
+      }
+      
+      .qr-box small {
+        font-size: 10px;
+      }
+      
+      .qr-box strong {
+        font-size: 11px;
+      }
+      
+      .table thead {
+        font-size: 11px;
+      }
+      
+      .table tbody td {
+        font-size: 12px;
+      }
+      
+      .table tfoot td {
+        font-size: 12px;
+      }
+      
+      .table th, .table td {
+        padding: 10px 8px;
+      }
+    }
 
-.footer{margin-top:16px;font-size:11px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px}
-.qr-box{display:flex;gap:8px;align-items:center}
-.qr-box small{display:block;color:#6b7280;font-size:10px}
-.qr-box strong{font-size:12px}
-
-.curve-bottom{position:absolute;inset:auto 0 0 0;height:80px;pointer-events:none}
-.muted{color:#6b7280}
-.total{font-weight:800}
-.text-right-mobile{text-align:left!important;margin-top:4px} /* Adjusting text alignment for stacked elements */
-
-
-/* Tablet and Desktop Styles */
-@media (min-width: 600px){
-    .panel .row{grid-template-columns:1fr 1fr;gap:10px}
-    .client-grid{grid-template-columns:repeat(2,1fr);gap:8px 24px}
-    .grid2{grid-template-columns:1fr 1fr;gap:10px}
-    .tag{display:inline-block;margin-left:6px;margin-top:0}
-    .tag:first-of-type{margin-left:10px}
-    .brand-row{flex-direction:row;align-items:center}
-    .footer{flex-direction:row;align-items:flex-end}
-    .text-right-mobile{text-align:right!important;margin-top:0}
-    .curve-top{height:160px;}
-    .curve-bottom{height:120px;}
-    .content{padding:60px 56px 48px}
-    .brand-logo{width:110px;height:64px}
-    .brand-name{font-size:26px}
-    .quote-badge{font-size:12px}
-    .client h3{font-size:13px}
-    .fecha{font-size:12px}
-    .desc{font-size:12px}
-    .footer{font-size:12px}
-    .qr-box small{font-size:inherit}
-    .qr-box strong{font-size:inherit}
-}
-
-@media (min-width: 1000px){
-  .app{display:grid;grid-template-columns:460px 1fr}
-  .panel{border-right:1px solid #e5e7eb;border-bottom:none;padding:28px;}
-  .canvas-wrap{padding:32px;background:#f3f4f6}
-  #pdf{width:794px; min-height:1123px;}
-}
+    /* Desktop */
+    @media (min-width: 1000px) {
+      .app {
+        display: grid;
+        grid-template-columns: 460px 1fr;
+      }
+      
+      .panel {
+        border-right: 1px solid #e5e7eb;
+        border-bottom: none;
+        padding: 28px;
+      }
+      
+      .canvas-wrap {
+        padding: 32px;
+        background: #f3f4f6;
+      }
+      
+      #pdf {
+        width: 794px;
+        min-height: 1123px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -179,53 +550,24 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     <h1>Políticas</h1>
     <textarea id="politicas" placeholder="• Seguro incluido sin costo adicional.&#10;• Combustible: lleno–lleno.&#10;• Kilometraje: ilimitado (salvo indicación).&#10;• Multas/peajes a cargo del cliente.&#10;• Cancelaciones: 24 h antes sin costo."></textarea>
 
-    <style>
-  /* Diseño mejorado para la barra de botones */
-  .btnbar {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas en móvil */
-    gap: 10px;
-    margin-top: 14px;
-  }
+    <div class="btnbar">
+      <button class="btn nav-app" onclick="window.location.href='app.html'" type="button">
+        Ir a app
+      </button>
+      
+      <button class="btn primary" id="generar" type="button" aria-label="Generar PDF">
+        Generar PDF
+      </button>
+      
+      <button class="btn ghost" id="rellenar" type="button" aria-label="Rellenar con datos de ejemplo">
+        Relleno ejemplo
+      </button>
 
-  /* El botón de "Ir a app" con un color que resalte */
-  .btn.nav-app {
-    background-color: #4f46e5; /* Índigo */
-    color: white;
-    border: none;
-  }
-
-  /* Botón de actualización/verificación */
-  .btn.refresh {
-    background-color: #10b981; /* Esmeralda */
-    color: white;
-    border: none;
-  }
-
-  @media (min-width: 600px) {
-    .btnbar {
-      grid-template-columns: repeat(4, 1fr); /* Cuatro columnas en desktop */
-    }
-  }
-</style>
-
-<div class="btnbar">
-  <button class="btn nav-app" onclick="window.location.href='app.html'" type="button">
-    Ir a app
-  </button>
-  
-  <button class="btn primary" id="generar" type="button" aria-label="Generar PDF">
-    Generar PDF
-  </button>
-  
-  <button class="btn ghost" id="rellenar" type="button" aria-label="Rellenar con datos de ejemplo">
-    Relleno ejemplo
-  </button>
-
-  <button class="btn refresh" onclick="location.reload(true)" type="button">
-    Ver Cambios
-  </button>
-</div>
+      <button class="btn refresh" onclick="location.reload(true)" type="button">
+        Ver Cambios
+      </button>
+    </div>
+    
     <p class="muted" style="margin-top:8px">El PDF se descarga automáticamente. IVA: <strong>no aplicado</strong>. Seguro: <strong>incluido</strong>.</p>
   </aside>
 
@@ -270,18 +612,24 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
           <div class="muted" style="margin-top:10px">Lugar entrega: <span id="lentregaTxt">—</span> · Lugar devolución: <span id="ldevolTxt">—</span></div>
         </div>
 
-        <div class="grid2" style="margin-top:14px">
+        <div class="grid2">
           <div>
-            <h3 style="margin:0 0 6px 0;font-size:13px">VEHÍCULO</h3>
-            <div class="muted">Modelo: <span id="vehiculoTxt">—</span> · Placa: <span id="placaTxt">—</span> · Color: <span id="colorTxt">—</span> · <span id="transmTxt">—</span></div>
+            <h3>VEHÍCULO</h3>
+            <div class="muted" style="font-size: 11px">Modelo: <span id="vehiculoTxt">—</span> · Placa: <span id="placaTxt">—</span> · Color: <span id="colorTxt">—</span> · <span id="transmTxt">—</span></div>
           </div>
-          <div class="text-right-mobile"><span class="muted">Días cobrados:</span> <strong id="diasTxt">0</strong></div>
+          <div style="text-align: right"><span class="muted">Días cobrados:</span> <strong id="diasTxt">0</strong></div>
         </div>
 
         <div class="table-wrap">
           <table class="table" cellspacing="0">
             <thead>
-              <tr><th style="width:42%">Concepto</th><th style="width:14%">Días</th><th style="width:16%">Precio/Día</th><th style="width:14%">Extras</th><th style="width:14%">Total</th></tr>
+              <tr>
+                <th style="width:40%">Concepto</th>
+                <th style="width:15%">Días</th>
+                <th style="width:15%">Precio/Día</th>
+                <th style="width:15%">Extras</th>
+                <th style="width:15%">Total</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -335,7 +683,7 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     const diffMs = b - a;
     if(diffMs<=0) return 0;
     const d = diffMs / (1000*60*60*24);
-    return Math.ceil(d); // redondeo al alza
+    return Math.ceil(d);
   }
 
   function autonum(){
@@ -364,14 +712,10 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     $('cotizacionTxt').textContent = cot.toString();
     $('fechaTxt').textContent = fecha.toLocaleDateString('es-SV');
 
-    // Cliente
     ['nombre','direccion','documento','telefono'].forEach(k=>$(k+'Txt').textContent = $(k).value || '—');
-
-    // Vehículo
     ['vehiculo','placa','color'].forEach(k=>$(k+'Txt').textContent = $(k).value || '—');
     $('transmTxt').textContent = $('transm').value || '—';
 
-    // Fechas y lugares
     const fe = asDate($('fentrega').value); const fd = asDate($('fdevol').value);
     $('entregaTxt').textContent = fe? fe.toLocaleString('es-SV') : '—';
     $('devolTxt').textContent = fd? fd.toLocaleString('es-SV') : '—';
@@ -381,13 +725,12 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     const dias = diasEntre(fe,fd);
     $('diasTxt').textContent = dias;
 
-    // Tarifas
     const precio = Number($('precio').value||0);
     const extrasDia = Number($('ext_gps').value||0) + Number($('ext_silla').value||0) + Number($('ext_cond').value||0);
     const cargoEntrega = Number($('ext_entrega').value||0);
     const descuento = Number($('descuento').value||0);
     const subtotal = (precio + extrasDia) * dias + cargoEntrega;
-    const iva = 0; // no aplica
+    const iva = 0;
     const deposito = Number($('deposito').value||0);
     const total = Math.max(subtotal - descuento + iva,0);
 
@@ -399,11 +742,9 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
 
     $('subtotalTxt').textContent = fmt(subtotal);
     $('descTxt').textContent = `- ${fmt(descuento)}`;
-
     $('depTxt').textContent = fmt(deposito);
     $('granTotalTxt').textContent = fmt(total);
 
-    // Políticas: escapar + saltos de línea visibles
     const rawPol = $('politicas').value || '—';
     const esc = rawPol
       .replace(/&/g,'&amp;')
@@ -413,28 +754,50 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
       .replace(/'/g,'&#39;');
     $('politicasTxt').innerHTML = esc.replace(/\n/g,'<br>');
 
-    // Pago visible
     $('pagoTxt').textContent = $('pago').value || '—';
-
     setQR();
   }
 
   async function generarPDF(){
     await sync();
 
-    // Asegurar QR cargado antes de capturar
-    await new Promise((resolve)=>{
-      const img = $('qrwa');
-      if (!img) return resolve();
-      if (img.complete && img.naturalWidth) return resolve();
-      img.onload = () => resolve();
-      img.onerror = () => resolve();
-    });
+    // Esperar a que todas las imágenes se carguen
+    await Promise.all([
+      new Promise((resolve)=>{
+        const img = $('qrwa');
+        if (!img) return resolve();
+        if (img.complete && img.naturalWidth) return resolve();
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        // Timeout de seguridad
+        setTimeout(resolve, 3000);
+      }),
+      new Promise((resolve)=>{
+        const img = $('logo');
+        if (!img) return resolve();
+        if (img.complete && img.naturalWidth) return resolve();
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        // Timeout de seguridad
+        setTimeout(resolve, 3000);
+      })
+    ]);
 
     const el = document.querySelector('#pdf');
-    const scale = Math.max(2, window.devicePixelRatio || 2);
-    const canvas = await html2canvas(el,{scale});
-    const imgData = canvas.toDataURL('image/png');
+    const scale = Math.max(2.5, window.devicePixelRatio || 2);
+    
+    // Configuración mejorada para captura de imágenes
+    const canvas = await html2canvas(el, {
+      scale: scale,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      imageTimeout: 15000,
+      removeContainer: true
+    });
+    
+    const imgData = canvas.toDataURL('image/png', 1.0);
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({orientation:'p', unit:'pt', format:'a4'});
 
@@ -443,7 +806,6 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     const imgW0 = canvas.width;
     const imgH0 = canvas.height;
 
-    // Encaje contain (sin recortes)
     const scaleToFit = Math.min(pageW / imgW0, pageH / imgH0);
     const drawW = imgW0 * scaleToFit;
     const drawH = imgH0 * scaleToFit;
@@ -455,7 +817,6 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     pdf.save(nombreArchivo);
   }
 
-  // Debounce para inputs
   const debounce=(fn,ms=120)=>{let t; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms)}}
   const syncDeb = debounce(sync, 120);
 
@@ -502,7 +863,6 @@ table{border-collapse:collapse;width:100%;min-width:500px} /* Ensure table is wi
     sync();
   });
 
-  // Primera sincronización
   document.addEventListener('DOMContentLoaded', sync);
 </script>
 </body>
