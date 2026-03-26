@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Generador PDF – Hoja de Reserva (Rent a Car)</title>
+  <title>YEAL RENT A CAR - Sistema Completo</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     .btn.nav {
       background: #e5c437;
@@ -81,6 +82,7 @@
       font-weight: 600;
       cursor: pointer;
       font-size: 14px;
+      transition: all 0.3s;
     }
     
     .btn.primary {
@@ -111,6 +113,13 @@
       background-color: #10b981;
       color: white;
       border: none;
+    }
+    
+    .btn.toggle-app {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      font-weight: 700;
     }
     
     .canvas-wrap {
@@ -331,6 +340,60 @@
       font-weight: 800;
     }
 
+    /* SKY APP STYLES */
+    .sky-app-container {
+      max-width: 100%;
+      background: #f0f4f8;
+      display: none;
+    }
+    
+    .sky-app-container.active {
+      display: block;
+    }
+    
+    .chat-window {
+      height: 300px;
+      overflow-y: auto;
+      padding: 1rem;
+      background-color: #e2e8f0;
+      border-radius: 0.5rem;
+    }
+    
+    .message {
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 1rem;
+      max-width: 80%;
+    }
+    
+    .user-msg {
+      background-color: #3b82f6;
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 0;
+    }
+    
+    .ai-msg {
+      background-color: #10b981;
+      color: white;
+      border-bottom-left-radius: 0;
+    }
+    
+    .tab-button {
+      background: white;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .tab-button.active {
+      border-bottom: 3px solid #3b82f6;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
     /* Tablet */
     @media (min-width: 600px) {
       .panel .row {
@@ -339,7 +402,7 @@
       }
       
       .btnbar {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
       }
       
       .client-grid {
@@ -551,20 +614,24 @@
     <textarea id="politicas" placeholder="• Seguro incluido sin costo adicional.&#10;• Combustible: lleno–lleno.&#10;• Kilometraje: ilimitado (salvo indicación).&#10;• Multas/peajes a cargo del cliente.&#10;• Cancelaciones: 24 h antes sin costo."></textarea>
 
     <div class="btnbar">
-      <a href="app.html" class="btn nav-app" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
-        Ir a app
-      </a>
+      <button class="btn toggle-app" onclick="toggleSkyApp()">
+        📱 SKY APP
+      </button>
       
-      <button class="btn primary" id="generar" type="button" aria-label="Generar PDF">
+      <button class="btn primary" id="generar" type="button">
         Generar PDF
       </button>
       
-      <button class="btn ghost" id="rellenar" type="button" aria-label="Rellenar con datos de ejemplo">
+      <button class="btn ghost" id="rellenar" type="button">
         Relleno ejemplo
       </button>
 
       <button class="btn refresh" onclick="location.reload(true)" type="button">
         Ver Cambios
+      </button>
+      
+      <button class="btn nav-app" onclick="window.location.href='app.html'" type="button">
+        Ir a app
       </button>
     </div>
 
@@ -671,9 +738,103 @@
   </main>
 </div>
 
+<!-- SKY APP COUNTER (OCULTA POR DEFECTO) -->
+<div id="sky-app" class="sky-app-container">
+  <div style="max-width: 600px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <!-- Header -->
+    <header style="background: #3b82f6; padding: 1rem; color: white; display: flex; justify-content: space-between; align-items: center;">
+      <h1 style="font-size: 1.25rem; font-weight: 700; margin: 0;">SKY-APP-COUNTER</h1>
+      <button onclick="toggleSkyApp()" style="background: #ef4444; color: white; padding: 0.5rem 1rem; border: none; border-radius: 9999px; cursor: pointer; font-size: 0.875rem; font-weight: 600;">
+        ← Volver
+      </button>
+    </header>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" style="padding: 2rem;">
+      <h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; text-align: center; margin-bottom: 1rem;">Acceso OTP</h2>
+      <div id="message-box" style="display: none; padding: 0.75rem; border-radius: 0.5rem; text-align: center; margin-bottom: 1rem;"></div>
+
+      <input type="email" id="auth-email" placeholder="Ingresa tu Email" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-bottom: 1rem;">
+      
+      <button id="send-otp-button" onclick="sendOtpReal()" style="width: 100%; background: #6366f1; color: white; padding: 0.75rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem;">
+        Enviar Código OTP
+      </button>
+
+      <input type="text" id="auth-otp" placeholder="Ingresa el Código OTP" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; display: none; margin-bottom: 1rem;">
+      
+      <button id="verify-otp-button" onclick="verifyOtp()" style="width: 100%; background: #10b981; color: white; padding: 0.75rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; display: none;">
+        Verificar y Entrar
+      </button>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" style="display: none;">
+      <!-- Tabs -->
+      <div style="display: flex; border-bottom: 1px solid #e5e7eb;">
+        <button id="tab-calc" class="tab-button active" onclick="showView('calc')" style="flex: 1; padding: 0.75rem; font-size: 0.875rem;">
+          Contador & Presupuesto
+        </button>
+        <button id="tab-chat" class="tab-button" onclick="showView('chat')" style="flex: 1; padding: 0.75rem; font-size: 0.875rem;">
+          Asesor IA
+        </button>
+      </div>
+
+      <div style="padding: 1.5rem;">
+        <!-- Calculator View -->
+        <div id="calc-view">
+          <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Presupuesto Rápido</h3>
+            
+            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151;">Fecha de Inicio</label>
+            <input type="date" id="start-date" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-top: 0.25rem; margin-bottom: 0.75rem;">
+            
+            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151;">Fecha de Fin</label>
+            <input type="date" id="end-date" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-top: 0.25rem; margin-bottom: 0.75rem;">
+
+            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151;">Precio Diario (USD)</label>
+            <input type="number" id="daily-price" value="45" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-top: 0.25rem; margin-bottom: 1rem;">
+
+            <button onclick="calculateBudget()" style="width: 100%; background: #3b82f6; color: white; padding: 0.75rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+              Calcular Presupuesto
+            </button>
+
+            <div id="budget-result" style="margin-top: 1rem; padding: 0.75rem; background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 0.5rem;">
+              <p style="font-weight: 500; color: #1e3a8a; margin: 0;">Resultado:</p>
+              <p id="days-output" style="font-size: 0.875rem; color: #1e40af; margin: 0.25rem 0;"></p>
+              <p id="cost-output" style="font-size: 1.125rem; font-weight: 700; color: #1e3a8a; margin: 0.25rem 0;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chat-view" style="display: none;">
+          <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Chatbot Asesor Gemini</h3>
+            
+            <div id="chat-window" class="chat-window" style="margin-bottom: 1rem;">
+              <div class="message ai-msg">
+                Hola! Soy el Asesor Gemini de SKY-APP-COUNTER. Pregúntame sobre tu cotización.
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="chat-input" placeholder="Pregunta sobre tu cotización..." style="flex: 1; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+              <button onclick="handleChat()" style="background: #6366f1; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+                Enviar
+              </button>
+            </div>
+            <p id="chat-loading" style="text-align: center; font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem; display: none;">Cargando respuesta...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
+  // PDF Generator Functions
   const $ = (id)=>document.getElementById(id);
   const fmt = (n)=> new Intl.NumberFormat('es-SV',{style:'currency',currency:'USD',minimumFractionDigits:2}).format(Number(n||0));
   const asDate = (v)=> v? new Date(v) : null;
@@ -761,7 +922,6 @@
   async function generarPDF(){
     await sync();
 
-    // Esperar a que todas las imágenes se carguen
     await Promise.all([
       new Promise((resolve)=>{
         const img = $('qrwa');
@@ -769,7 +929,6 @@
         if (img.complete && img.naturalWidth) return resolve();
         img.onload = () => resolve();
         img.onerror = () => resolve();
-        // Timeout de seguridad
         setTimeout(resolve, 3000);
       }),
       new Promise((resolve)=>{
@@ -778,7 +937,6 @@
         if (img.complete && img.naturalWidth) return resolve();
         img.onload = () => resolve();
         img.onerror = () => resolve();
-        // Timeout de seguridad
         setTimeout(resolve, 3000);
       })
     ]);
@@ -786,7 +944,6 @@
     const el = document.querySelector('#pdf');
     const scale = Math.max(2.5, window.devicePixelRatio || 2);
     
-    // Configuración mejorada para captura de imágenes
     const canvas = await html2canvas(el, {
       scale: scale,
       useCORS: true,
@@ -864,6 +1021,180 @@
   });
 
   document.addEventListener('DOMContentLoaded', sync);
+
+  // SKY APP Functions
+  const API_KEY = "";
+  const EMAILJS_PUBLIC_KEY = 'Olk6lWLWFW1mPDPyd';
+  const EMAILJS_SERVICE_ID = 'service_0k29106';
+  const EMAILJS_TEMPLATE_ID = 'template_tsrikv8';
+
+  let authEmail = '';
+  let currentOtp = '';
+
+  function toggleSkyApp() {
+    const skyApp = $('sky-app');
+    skyApp.classList.toggle('active');
+    window.scrollTo(0, skyApp.classList.contains('active') ? document.body.scrollHeight : 0);
+  }
+
+  function showMessage(message, type = 'info') {
+    const msgBox = $('message-box');
+    msgBox.textContent = message;
+    msgBox.style.cssText = `display: block; padding: 0.75rem; border-radius: 0.5rem; text-align: center; margin-bottom: 1rem; ${type === 'error' ? 'background: #fee2e2; color: #991b1b;' : 'background: #d1fae5; color: #065f46;'}`;
+  }
+
+  function generateRandomOtp() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  function showView(viewId) {
+    $('calc-view').style.display = 'none';
+    $('chat-view').style.display = 'none';
+    $(`${viewId}-view`).style.display = 'block';
+
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    $(`tab-${viewId}`).classList.add('active');
+  }
+
+  async function sendOtpReal() {
+    authEmail = $('auth-email').value;
+
+    if (!authEmail || !authEmail.includes('@')) {
+      showMessage("Por favor, ingresa un email válido.", 'error');
+      return;
+    }
+
+    currentOtp = generateRandomOtp();
+    
+    const sendButton = $('send-otp-button');
+    sendButton.textContent = 'Enviando...';
+    sendButton.disabled = true;
+
+    const templateParams = {
+      passcode: currentOtp,
+      email: authEmail,
+      app_name: "SKY-APP-COUNTER"
+    };
+    
+    try {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      $('auth-email').disabled = true;
+      $('send-otp-button').style.display = 'none';
+      $('auth-otp').style.display = 'block';
+      $('verify-otp-button').style.display = 'block';
+      
+      showMessage(`Código enviado a ${authEmail}`, 'info');
+
+    } catch (error) {
+      console.warn(`Código generado: ${currentOtp}`);
+      showMessage(`Error de envío. Usa código: ${currentOtp}`, 'error');
+
+      $('auth-email').disabled = true;
+      $('send-otp-button').style.display = 'none';
+      $('auth-otp').style.display = 'block';
+      $('verify-otp-button').style.display = 'block';
+
+    } finally {
+      sendButton.textContent = 'Enviar Código OTP';
+      sendButton.disabled = false;
+    }
+  }
+
+  function verifyOtp() {
+    const enteredOtp = $('auth-otp').value.trim();
+    
+    if (enteredOtp === currentOtp && currentOtp !== '') {
+      showMessage("Acceso concedido", 'info');
+      $('auth-screen').style.display = 'none';
+      $('main-app').style.display = 'block';
+      showView('calc');
+    } else {
+      showMessage("Código incorrecto", 'error');
+    }
+  }
+
+  function calculateBudget() {
+    const startDate = $('start-date').value;
+    const endDate = $('end-date').value;
+    const dailyPrice = parseFloat($('daily-price').value);
+
+    if (!startDate || !endDate || isNaN(dailyPrice)) {
+      showMessage("Completa todos los campos", 'error');
+      return;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (start >= end) {
+      showMessage("Fecha fin debe ser posterior", 'error');
+      return;
+    }
+
+    const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const totalCost = diffDays * dailyPrice;
+
+    $('days-output').textContent = `Total: ${diffDays} días`;
+    $('cost-output').textContent = `Presupuesto: $${totalCost.toFixed(2)}`;
+  }
+
+  function appendMessage(sender, text) {
+    const chatWindow = $('chat-window');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${sender === 'user' ? 'user-msg' : 'ai-msg'}`;
+    msgDiv.textContent = text;
+    chatWindow.appendChild(msgDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  async function handleChat() {
+    const userQuery = $('chat-input').value.trim();
+    if (!userQuery) return;
+
+    appendMessage('user', userQuery);
+    $('chat-input').value = '';
+    $('chat-loading').style.display = 'block';
+
+    const systemPrompt = `Eres el Asesor de SKY-APP-COUNTER (rentadora de vehículos). Ayuda con cotizaciones y presupuestos. Sé conciso y profesional.`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+
+    const payload = {
+      contents: [{ parts: [{ text: userQuery }] }],
+      systemInstruction: { parts: [{ text: systemPrompt }] }
+    };
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+      const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "No pude obtener respuesta.";
+      appendMessage('ai', text);
+
+    } catch (error) {
+      appendMessage('ai', `Error: ${error.message}`);
+    } finally {
+      $('chat-loading').style.display = 'none';
+    }
+  }
+
+  window.onload = () => {
+    const today = new Date();
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+    
+    $('start-date').valueAsDate = today;
+    $('end-date').valueAsDate = nextWeek;
+  };
 </script>
 </body>
 </html>
